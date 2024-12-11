@@ -12,16 +12,28 @@
         example = ./.;
       };
 
-      devShellPackages = lib.mkOption {
-        type = lib.types.listOf lib.types.package;
-        description = "A list of packages to add to this project's devshell (also is added to the `default` devshell)";
-        default = [];
-      };
-
       serverCommand = lib.mkOption {
         type = lib.types.str;
         description = "The command to run to start the server in production";
         example = "server --port 7000";
+      };
+
+      devTools = lib.mkOption {
+        type = lib.types.listOf lib.types.package;
+        description = "A list of packages make available in the devshell for this project (and `default` devshell). This is useful for things like LSPs, formatters, etc.";
+        default = [];
+      };
+
+      buildDependencies = lib.mkOption {
+        type = lib.types.listOf lib.types.package;
+        description = "A list of dependencies required to build this package. They are made available in the devshell, and at build time";
+        default = [];
+      };
+
+      runtimeDependencies = lib.mkOption {
+        type = lib.types.listOf lib.types.package;
+        description = "A list of dependencies required at runtime. They are made available in the devshell, at build time, and at runtime";
+        default = [];
       };
     };
   in {
@@ -30,6 +42,7 @@
       craneArgsByProject = builtins.mapAttrs (name: projectConfig: rec {
         src = craneLib.cleanCargoSource projectConfig.src;
         cargoArtifacts = craneLib.buildDepsOnly { inherit src; };
+        buildInputs = projectConfig.buildDependencies ++ projectConfig.runtimeDependencies;
       }) config.rust;
     in {
       options = {
@@ -42,7 +55,7 @@
       config = {
         packages = builtins.mapAttrs (name: projectConfig:
           craneLib.buildPackage {
-            inherit (craneArgsByProject.${name}) src cargoArtifacts;
+            inherit (craneArgsByProject.${name}) src cargoArtifacts buildInputs;
           }
         ) config.rust;
 
@@ -57,7 +70,10 @@
 
         devShells = builtins.mapAttrs (name: projectConfig:
           craneLib.devShell {
-            packages = projectConfig.devShellPackages;
+            packages =
+              projectConfig.devTools ++
+              projectConfig.buildDependencies ++
+              projectConfig.runtimeDependencies;
           }
         ) config.rust;
 
@@ -72,7 +88,7 @@
               DynamicUser = true;
               ExecStart = lib.getExe (pkgs.writeShellApplication {
                 name = "start-${name}";
-                runtimeInputs = [ config.packages.${name} ];
+                runtimeInputs = [ config.packages.${name} ] ++ projectConfig.runtimeDependencies;
                 text = projectConfig.serverCommand;
               });
             };
