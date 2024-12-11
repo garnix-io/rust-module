@@ -41,7 +41,7 @@
       craneLib = crane.mkLib pkgs;
       craneArgsByProject = builtins.mapAttrs (name: projectConfig: rec {
         src = craneLib.cleanCargoSource projectConfig.src;
-        cargoArtifacts = craneLib.buildDepsOnly { inherit src; };
+        cargoArtifacts = craneLib.buildDepsOnly { inherit src buildInputs; };
         buildInputs = projectConfig.buildDependencies ++ projectConfig.runtimeDependencies;
       }) config.rust;
     in {
@@ -61,11 +61,11 @@
 
         checks = lib.foldlAttrs (acc: name: projectConfig: acc // {
           "${name}-cargo-clippy" = craneLib.cargoClippy {
-            inherit (craneArgsByProject.${name}) src cargoArtifacts;
+            inherit (craneArgsByProject.${name}) src cargoArtifacts buildInputs;
             cargoClippyExtraArgs = "--all-targets -- --deny warnings";
           };
           "${name}-cargo-fmt" = craneLib.cargoFmt { inherit (craneArgsByProject.${name}) src; };
-          "${name}-cargo-doc" = craneLib.cargoDoc { inherit (craneArgsByProject.${name}) src cargoArtifacts; };
+          "${name}-cargo-doc" = craneLib.cargoDoc { inherit (craneArgsByProject.${name}) src cargoArtifacts buildInputs; };
         }) {} config.rust;
 
         devShells = builtins.mapAttrs (name: projectConfig:
