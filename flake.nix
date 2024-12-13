@@ -32,7 +32,7 @@
 
       runtimeDependencies = lib.mkOption {
         type = lib.types.listOf lib.types.package;
-        description = "A list of dependencies required at runtime. They are made available in the devshell, at build time, and at runtime";
+        description = "A list of dependencies required at runtime. They are made available in the devshell, at build time, and are available on the server at runtime";
         default = [];
       };
     };
@@ -78,6 +78,8 @@
         ) config.rust;
 
         nixosConfigurations = builtins.mapAttrs (name: projectConfig: {
+          environment.systemPackages = projectConfig.runtimeDependencies;
+
           systemd.services.${name} = {
             description = "${name} rust garnix module";
             wantedBy = [ "multi-user.target" ];
