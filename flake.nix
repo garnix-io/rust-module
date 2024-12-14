@@ -5,6 +5,26 @@
   let
     lib = nixpkgs.lib;
 
+    webServerSubmodule.options = {
+      command = lib.mkOption {
+        type = lib.types.str;
+        description = "The command to run to start the server in production";
+        example = "server --port 7000";
+      };
+
+      port = lib.mkOption {
+        type = lib.types.port;
+        description = "Port to forward incoming http requests to";
+        example = 7000;
+      };
+
+      path = lib.mkOption {
+        type = lib.types.str;
+        description = "Path to host your rust server on";
+        default = "/";
+      };
+    };
+
     rustSubmodule.options = {
       src = lib.mkOption {
         type = lib.types.path;
@@ -12,10 +32,10 @@
         example = ./.;
       };
 
-      serverCommand = lib.mkOption {
-        type = lib.types.str;
-        description = "The command to run to start the server in production";
-        example = "server --port 7000";
+      webServer = lib.mkOption {
+        type = lib.types.nullOr (lib.types.submodule webServerSubmodule);
+        description = "If set, generates a Nixos configuration with an http server and sets up garnix to deploy this";
+        default = null;
       };
 
       devTools = lib.mkOption {
@@ -77,7 +97,7 @@
           }
         ) config.rust;
 
-        nixosConfigurations = builtins.mapAttrs (name: projectConfig: {
+        nixosConfigurations = builtins.mapAttrs (name: projectConfig: lib.mkIf (projectConfig.webServer != null) {
           environment.systemPackages = projectConfig.runtimeDependencies;
 
           systemd.services.${name} = {
@@ -91,10 +111,22 @@
               ExecStart = lib.getExe (pkgs.writeShellApplication {
                 name = "start-${name}";
                 runtimeInputs = [ config.packages.${name} ] ++ projectConfig.runtimeDependencies;
-                text = projectConfig.serverCommand;
+                text = projectConfig.webServer.command;
               });
             };
           };
+
+          services.nginx = {
+            enable = true;
+            recommendedProxySettings = true;
+            recommendedOptimisation = true;
+            virtualHosts.default = {
+              default = true;
+              locations.${projectConfig.webServer.path}.proxyPass = "http://localhost:${toString projectConfig.webServer.port}";
+            };
+          };
+
+          networking.firewall.allowedTCPPorts = [ 80 ];
         }) config.rust;
       };
     };
