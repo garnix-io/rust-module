@@ -34,7 +34,7 @@
 
       webServer = lib.mkOption {
         type = lib.types.nullOr (lib.types.submodule webServerSubmodule);
-        description = "If set, generates a Nixos configuration with an http server and sets up garnix to deploy this";
+        description = "If set, generates a Nixos configuration with an http server";
         default = null;
       };
 
