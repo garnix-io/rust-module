@@ -97,7 +97,7 @@
           }
         ) config.rust;
 
-        nixosConfigurations.default = lib.mkMerge (
+        nixosConfigurations.default =
           # Global nixos configuration
           [{
             services.nginx = {
@@ -133,8 +133,7 @@
             };
 
             services.nginx.virtualHosts.default.locations.${projectConfig.webServer.path}.proxyPass = "http://localhost:${toString projectConfig.webServer.port}";
-          }) config.rust))
-        );
+          }) config.rust));
       };
     };
   };
