@@ -97,37 +97,43 @@
           }
         ) config.rust;
 
-        nixosConfigurations = builtins.mapAttrs (name: projectConfig: lib.mkIf (projectConfig.webServer != null) {
-          environment.systemPackages = projectConfig.runtimeDependencies;
-
-          systemd.services.${name} = {
-            description = "${name} rust garnix module";
-            wantedBy = [ "multi-user.target" ];
-            after = [ "network-online.target" ];
-            wants = [ "network-online.target" ];
-            serviceConfig = {
-              Type = "simple";
-              DynamicUser = true;
-              ExecStart = lib.getExe (pkgs.writeShellApplication {
-                name = "start-${name}";
-                runtimeInputs = [ config.packages.${name} ] ++ projectConfig.runtimeDependencies;
-                text = projectConfig.webServer.command;
-              });
+        nixosConfigurations.default =
+          # Global nixos configuration
+          [{
+            services.nginx = {
+              enable = true;
+              recommendedProxySettings = true;
+              recommendedOptimisation = true;
+              virtualHosts.default = {
+                default = true;
+              };
             };
-          };
 
-          services.nginx = {
-            enable = true;
-            recommendedProxySettings = true;
-            recommendedOptimisation = true;
-            virtualHosts.default = {
-              default = true;
-              locations.${projectConfig.webServer.path}.proxyPass = "http://localhost:${toString projectConfig.webServer.port}";
+            networking.firewall.allowedTCPPorts = [ 80 ];
+          }]
+          ++
+          # Per project nixos configuration
+          (builtins.attrValues (builtins.mapAttrs (name: projectConfig: lib.mkIf (projectConfig.webServer != null) {
+            environment.systemPackages = projectConfig.runtimeDependencies;
+
+            systemd.services.${name} = {
+              description = "${name} rust garnix module";
+              wantedBy = [ "multi-user.target" ];
+              after = [ "network-online.target" ];
+              wants = [ "network-online.target" ];
+              serviceConfig = {
+                Type = "simple";
+                DynamicUser = true;
+                ExecStart = lib.getExe (pkgs.writeShellApplication {
+                  name = "start-${name}";
+                  runtimeInputs = [ config.packages.${name} ] ++ projectConfig.runtimeDependencies;
+                  text = projectConfig.webServer.command;
+                });
+              };
             };
-          };
 
-          networking.firewall.allowedTCPPorts = [ 80 ];
-        }) config.rust;
+            services.nginx.virtualHosts.default.locations.${projectConfig.webServer.path}.proxyPass = "http://localhost:${toString projectConfig.webServer.port}";
+          }) config.rust));
       };
     };
   };
