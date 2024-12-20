@@ -7,7 +7,7 @@
 
     webServerSubmodule.options = {
       command = lib.mkOption {
-        type = lib.types.str;
+        type = lib.types.nonEmptyStr;
         description = "The command to run to start the server in production";
         example = "server --port 7000";
       };
@@ -19,7 +19,7 @@
       };
 
       path = lib.mkOption {
-        type = lib.types.str;
+        type = lib.types.nonEmptyStr;
         description = "Path to host your rust server on";
         default = "/";
       };
