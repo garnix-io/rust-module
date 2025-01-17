@@ -10,7 +10,7 @@
         type = lib.types.nonEmptyStr;
         description = "The command to run to start the server in production";
         example = "server --port 7000";
-      };
+      } // { name = "server command"; };
 
       port = lib.mkOption {
         type = lib.types.port;
@@ -22,7 +22,7 @@
         type = lib.types.nonEmptyStr;
         description = "Path to host your rust server on";
         default = "/";
-      };
+      } // { name = "api path"; };
     };
 
     rustSubmodule.options = {
@@ -30,7 +30,7 @@
         type = lib.types.path;
         description = "A path to the directory containing Cargo.lock, Cargo.toml, and src";
         example = ./.;
-      };
+      } // { name = "source directory"; };
 
       webServer = lib.mkOption {
         type = lib.types.nullOr (lib.types.submodule webServerSubmodule);
@@ -42,19 +42,19 @@
         type = lib.types.listOf lib.types.package;
         description = "A list of packages make available in the devshell for this project (and `default` devshell). This is useful for things like LSPs, formatters, etc.";
         default = [];
-      };
+      } // { name = "development tools"; };
 
       buildDependencies = lib.mkOption {
         type = lib.types.listOf lib.types.package;
         description = "A list of dependencies required to build this package. They are made available in the devshell, and at build time";
         default = [];
-      };
+      } // { name = "build dependencies"; };
 
       runtimeDependencies = lib.mkOption {
         type = lib.types.listOf lib.types.package;
         description = "A list of dependencies required at runtime. They are made available in the devshell, at build time, and are available on the server at runtime";
         default = [];
-      };
+      } // { name = "runtime dependencies"; };
     };
   in {
     garnixModules.default = { pkgs, config, ... }: let
