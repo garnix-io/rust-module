@@ -97,7 +97,12 @@
           }
         ) config.rust;
 
-        nixosConfigurations.default =
+        nixosConfigurations = let 
+          hasAnyWebServer =
+            builtins.any (projectConfig: projectConfig.webServer != null)
+            (builtins.attrValues config.rust);
+        in lib.mkIf hasAnyWebServer {
+          default =
           # Global nixos configuration
           [{
             services.nginx = {
@@ -134,7 +139,7 @@
 
             services.nginx.virtualHosts.default.locations.${projectConfig.webServer.path}.proxyPass = "http://localhost:${toString projectConfig.webServer.port}";
           }) config.rust));
-      };
+      };};
     };
   };
 }
