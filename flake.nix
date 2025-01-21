@@ -29,7 +29,7 @@
       src = lib.mkOption {
         type = lib.types.path;
         description = "A path to the directory containing Cargo.lock, Cargo.toml, and src";
-        example = ./.;
+        example = "./.";
       } // { name = "source directory"; };
 
       webServer = lib.mkOption {
