@@ -8,19 +8,19 @@
     webServerSubmodule.options = {
       command = lib.mkOption {
         type = lib.types.nonEmptyStr;
-        description = "The command to run to start the server in production";
+        description = "The command to run to start the server in production.";
         example = "server --port 7000";
       } // { name = "server command"; };
 
       port = lib.mkOption {
         type = lib.types.port;
-        description = "Port to forward incoming http requests to";
+        description = "Port to forward incoming http requests to. The server command has to listen on this port.";
         example = 7000;
       };
 
       path = lib.mkOption {
         type = lib.types.nonEmptyStr;
-        description = "Path to host your rust server on";
+        description = "Path your Rust server will be hosted on.";
         default = "/";
       } // { name = "api path"; };
     };
@@ -28,13 +28,13 @@
     rustSubmodule.options = {
       src = lib.mkOption {
         type = lib.types.path;
-        description = "A path to the directory containing Cargo.lock, Cargo.toml, and src";
+        description = "A path to the directory containing Cargo.lock, Cargo.toml, and src.";
         example = "./.";
       } // { name = "source directory"; };
 
       webServer = lib.mkOption {
         type = lib.types.nullOr (lib.types.submodule webServerSubmodule);
-        description = "Whether to create an HTTP server based on this Rust project";
+        description = "Whether to create an HTTP server based on this Rust project.";
         default = null;
       };
 
@@ -46,13 +46,13 @@
 
       buildDependencies = lib.mkOption {
         type = lib.types.listOf lib.types.package;
-        description = "A list of dependencies required to build this package. They are made available in the devshell, and at build time";
+        description = "A list of dependencies required to build this package. They are made available in the devshell, and at build time.";
         default = [];
       } // { name = "build dependencies"; };
 
       runtimeDependencies = lib.mkOption {
         type = lib.types.listOf lib.types.package;
-        description = "A list of dependencies required at runtime. They are made available in the devshell, at build time, and are available on the server at runtime";
+        description = "A list of dependencies required at runtime. They are made available in the devshell, at build time, and are available on the server at runtime.";
         default = [];
       } // { name = "runtime dependencies"; };
     };
@@ -68,7 +68,7 @@
       options = {
         rust = lib.mkOption {
           type = lib.types.attrsOf (lib.types.submodule rustSubmodule);
-          description = "An attrset of rust projects to generate";
+          description = "An attrset of rust projects to generate.";
         };
       };
 
