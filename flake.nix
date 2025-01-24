@@ -48,13 +48,13 @@
         type = lib.types.listOf lib.types.package;
         description = "A list of dependencies required to build this package. They are made available in the devshell, and at build time.";
         default = [];
-      } // { name = "build dependencies"; };
+      };
 
       runtimeDependencies = lib.mkOption {
         type = lib.types.listOf lib.types.package;
         description = "A list of dependencies required at runtime. They are made available in the devshell, at build time, and are available on the server at runtime.";
         default = [];
-      } // { name = "runtime dependencies"; };
+      };
     };
   in {
     garnixModules.default = { pkgs, config, ... }: let
