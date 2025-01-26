@@ -9,13 +9,14 @@
       command = lib.mkOption {
         type = lib.types.nonEmptyStr;
         description = "The command to run to start the server in production.";
-        example = "server --port 7000";
+        example = "server --port 8000";
       } // { name = "server command"; };
 
       port = lib.mkOption {
         type = lib.types.port;
         description = "Port to forward incoming http requests to. The server command has to listen on this port.";
-        example = 7000;
+        example = 8000;
+        default = 8000;
       };
 
       path = lib.mkOption {
