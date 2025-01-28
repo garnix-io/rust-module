@@ -23,7 +23,7 @@
         type = lib.types.nonEmptyStr;
         description = "Path your Rust server will be hosted on.";
         default = "/";
-      } // { name = "api path"; };
+      } // { name = "API path"; };
     };
 
     rustSubmodule.options = {
