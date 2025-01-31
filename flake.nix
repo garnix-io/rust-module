@@ -82,7 +82,7 @@
           options = {
             rust = lib.mkOption {
               type = lib.types.attrsOf (lib.types.submodule rustSubmodule);
-              description = "An attrset of rust projects to generate.";
+              description = "An attrset of Rust projects to generate.";
             };
           };
 
