@@ -1,9 +1,10 @@
 {
-  description = ''A garnix module for projects using Rust.
+  description = ''
+    A garnix module for projects using Rust.
 
-  Add build and runtime dependencies and optionally deploy a web server.
+    Add build and runtime dependencies and optionally deploy a web server.
 
-  [Documentation](https://garnix.io/docs/modules/rust) - [Source](https://github.com/garnix-io/rust-module).
+    [Documentation](https://garnix.io/docs/modules/rust) - [Source](https://github.com/garnix-io/rust-module).
   '';
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
   inputs.crane.url = "github:ipetkov/crane";
