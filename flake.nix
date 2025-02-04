@@ -22,7 +22,7 @@
 
         port = lib.mkOption {
           type = lib.types.port;
-          description = "Port to forward incoming http requests to. The server command has to listen on this port.";
+          description = "Port to forward incoming HTTP requests to. The server command has to listen on this port.";
           example = 8000;
           default = 8000;
         };
@@ -149,7 +149,7 @@
                       environment.systemPackages = projectConfig.runtimeDependencies;
 
                       systemd.services.${name} = {
-                        description = "${name} rust garnix module";
+                        description = "${name} Rust garnix module";
                         wantedBy = [ "multi-user.target" ];
                         after = [ "network-online.target" ];
                         wants = [ "network-online.target" ];
