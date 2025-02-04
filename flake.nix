@@ -39,7 +39,7 @@
         src = lib.mkOption
           {
             type = lib.types.path;
-            description = "A path to the directory containing Cargo.lock, Cargo.toml, and src.";
+            description = "A path to the directory containing `Cargo.lock`, `Cargo.toml`, and `src`.";
             example = "./.";
           } // { name = "source directory"; };
 
@@ -129,7 +129,7 @@
               in
               lib.mkIf hasAnyWebServer {
                 default =
-                  # Global nixos configuration
+                  # Global NixOS configuration
                   [{
                     services.nginx = {
                       enable = true;
@@ -143,7 +143,7 @@
                     networking.firewall.allowedTCPPorts = [ 80 ];
                   }]
                   ++
-                  # Per project nixos configuration
+                  # Per project NixOS configuration
                   (builtins.attrValues (builtins.mapAttrs
                     (name: projectConfig: lib.mkIf (projectConfig.webServer != null) {
                       environment.systemPackages = projectConfig.runtimeDependencies;
