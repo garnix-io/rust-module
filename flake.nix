@@ -22,7 +22,7 @@
 
         port = lib.mkOption {
           type = lib.types.port;
-          description = "Port to forward incoming HTTP requests to. The server command has to listen on this port. This also sets the PORT environment variable set for the server command.";
+          description = "Port to forward incoming HTTP requests to. The server command has to listen on this port. This also sets the PORT environment variable for the server command.";
           example = 8000;
           default = 8000;
         };
