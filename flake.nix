@@ -6,12 +6,10 @@
 
     [Documentation](https://garnix.io/docs/modules/rust) - [Source](https://github.com/garnix-io/rust-module).
   '';
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
   inputs.crane.url = "github:ipetkov/crane";
-  outputs = { self, nixpkgs, crane }:
+  outputs = { self, crane }: {
+    garnixModules.default = { pkgs, lib, config, ... }:
     let
-      lib = nixpkgs.lib;
-
       webServerSubmodule.options = {
         command = lib.mkOption
           {
@@ -68,10 +66,7 @@
           default = [ ];
         };
       };
-    in
-    {
-      garnixModules.default = { pkgs, config, ... }:
-        let
+
           craneLib = crane.mkLib pkgs;
           craneArgsByProject = builtins.mapAttrs
             (name: projectConfig: rec {
@@ -80,7 +75,7 @@
               buildInputs = projectConfig.buildDependencies ++ projectConfig.runtimeDependencies;
             })
             config.rust;
-        in
+    in
         {
           options = {
             rust = lib.mkOption {
