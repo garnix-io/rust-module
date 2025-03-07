@@ -76,7 +76,7 @@
 
             buildDependencies = lib.mkOption {
               type = lib.types.listOf lib.types.package;
-              description = "A list of dependencies required to build this package. They are made available in the devshell, and at build time.";
+              description = "A list of dependencies required to build this package. They are made available in the devshell, and at build time. Do not include library dependencies as they are already managed.";
               default = [ ];
             };
 
