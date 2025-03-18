@@ -93,7 +93,7 @@
 
           craneLib = crane.mkLib pkgs;
           craneArgsByProject = builtins.mapAttrs (name: projectConfig: rec {
-            src = craneLib.cleanCargoSource projectConfig.src;
+            src = projectConfig.src;
             cargoArtifacts = craneLib.buildDepsOnly { inherit src buildInputs; };
             buildInputs = projectConfig.buildDependencies ++ projectConfig.runtimeDependencies;
           }) config.rust;
